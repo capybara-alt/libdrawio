@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"io"
+	"log"
 	"net/url"
 )
 
@@ -38,10 +39,10 @@ type MxCell struct {
 }
 
 type Object struct {
-	Id        string `xml:"id,attr,omitempty"`
-	Lable     string `xml:"label,attr"`
-	Component string `xml:"component,attr"`
-	MxCell    MxCell `xml:"mxCell"`
+	Id        string     `xml:"id,attr,omitempty"`
+	Label     string     `xml:"label,attr"`
+	MxCell    MxCell     `xml:"mxCell"`
+	DataLabel []xml.Attr `xml:",any,attr"`
 }
 
 type Root struct {
@@ -93,6 +94,7 @@ func Decompress(compressedStr string) (*MxGraphModel, error) {
 
 	mxGraphModel := new(MxGraphModel)
 	if err = xml.Unmarshal([]byte(unescaped), &mxGraphModel); err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

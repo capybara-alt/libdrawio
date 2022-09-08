@@ -76,7 +76,6 @@ func TestGetIdsFromObjectAndMxCells(t *testing.T) {
 	}
 
 	ids := mxGraphModel.GetIds()
-
 	if ids[0] != "0" {
 		t.Fail()
 	}
@@ -181,6 +180,26 @@ func TestFindMxCellFromEmptyMxGraphModel(t *testing.T) {
 	obj := tests.FindMxCell("aaa")
 
 	if obj != nil {
+		t.Fail()
+	}
+}
+
+func TestGetDataLabel(t *testing.T) {
+	tests := "dZI9U8MwDIZ/TUbu4oQrZSVAO5SFDoXRjYVtLrFzjtqk/HqcWs7HFSZbj2RLeqUkL+p+43ij3qyAKslS0Sf5c5JljKUrfwzkEsiarQOQTgsKmsBe/wDBlOhJC2gXgWhthbpZwtIaAyUuGHfOdsuwL1stszZcwg3Yl7y6pQctUFEX2cPEt6ClipnZ6jF4ah6DqZNWcWG7Gcpfkrxw1mK41X0B1SBe1CW8e/3HOxbmwOAfD+zxe9AjSyt+9DO5BpB+XAYTocWA4qdQbM8fO2neTSMPO/Opt3V2x8ZixyJavESBnD0ZAcP7NMmfOqUR9g0vB2/nV8IzhfWQn/nrbc3UxhkcQj9DlG8DtgZ0Fx9C3nEzaKHYPdndNB4WNVez0ayIcdoIOX49ieYv1GM0ScZoTuO6hs6WPn/5BQ=="
+	mxGraphModel, err := libdrawio.Decompress(tests)
+	if err != nil {
+		t.Fail()
+	}
+
+	if len(mxGraphModel.Content.Object) < 1 {
+		t.Fail()
+	}
+
+	if mxGraphModel.Content.Object[0].DataLabel[0].Name.Local != "tag" {
+		t.Fail()
+	}
+
+	if mxGraphModel.Content.Object[0].DataLabel[0].Value != "test" {
 		t.Fail()
 	}
 }
