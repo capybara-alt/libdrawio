@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/capybara-alt/libdrawio"
+	"github.com/capybara-alt/libdrawio/libdrawio"
 )
 
 func TestNewMxFile(t *testing.T) {

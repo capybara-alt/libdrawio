@@ -3,7 +3,7 @@ package libdrawio_test
 import (
 	"testing"
 
-	"github.com/capybara-alt/libdrawio"
+	"github.com/capybara-alt/libdrawio/libdrawio"
 )
 
 func TestDecompress(t *testing.T) {
