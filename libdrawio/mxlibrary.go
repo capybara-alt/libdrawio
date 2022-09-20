@@ -24,18 +24,10 @@ func NewMxLibrary() *MxLibrary {
 	return new(MxLibrary)
 }
 
-// Make MxLibrary string, then set to MxLibrary.Value.
-// Implement mxlibObjectSetterFunc to set custom field value (except MxLibObject.Xml) to MxLibObject.
-func (m *MxLibrary) MakeMxLibrary(mxlibObjSetterFunc func(m *MxLibObject) *MxLibObject) error {
-	mxlibObjects := make([]MxLibObject, len(m.MxGraphModels))
-	for index, mxGraphModel := range m.MxGraphModels {
-		result, err := mxGraphModel.Compress()
-		if err != nil {
-			return err
-		}
-		mxlibObj := new(MxLibObject)
-		mxlibObj.Xml = result
-		mxlibObjects[index] = *mxlibObjSetterFunc(mxlibObj)
+// Make MxLibrary string from MxLibrary.MxGraphModels, then set to MxLibrary.Value.
+func (m *MxLibrary) MakeMxLibrary(mxlibObjects []MxLibObject) error {
+	for index, mxlibObj := range mxlibObjects {
+		mxlibObjects[index] = mxlibObj
 	}
 
 	b, err := json.Marshal(mxlibObjects)
@@ -45,6 +37,22 @@ func (m *MxLibrary) MakeMxLibrary(mxlibObjSetterFunc func(m *MxLibObject) *MxLib
 
 	m.Value = string(b)
 	return nil
+}
+
+// Make MxLibObj from MxGraphModel, title, height, width
+func (m *MxLibrary) MakeMxLibObj(mxGraphModel *MxGraphModel, title string, height, width int) (*MxLibObject, error) {
+	result, err := mxGraphModel.Compress()
+	if err != nil {
+		return nil, err
+	}
+
+	mxlibObj := new(MxLibObject)
+	mxlibObj.Xml = result
+	mxlibObj.H = height
+	mxlibObj.W = width
+	mxlibObj.Title = title
+
+	return mxlibObj, nil
 }
 
 // Write MxLibrary to xml file.
