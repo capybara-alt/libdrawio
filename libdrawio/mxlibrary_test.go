@@ -88,19 +88,21 @@ func TestMakeMxLibrary(t *testing.T) {
 		},
 	}
 
-	tests.MxGraphModels = mxGraphModels
-	err := tests.MakeMxLibrary(func(m *libdrawio.MxLibObject) *libdrawio.MxLibObject {
-		m.H = 24
-		m.W = 24
-		m.Title = "test"
-		return m
-	})
-	if err != nil {
+	mxlibObjs := make([]libdrawio.MxLibObject, len(mxGraphModels))
+	for index, mxGraphModel := range mxGraphModels {
+		mxlibObj, err := tests.MakeMxLibObj(&mxGraphModel, "test", 24, 24)
+		if err != nil {
+			t.Fail()
+		}
+		mxlibObjs[index] = *mxlibObj
+	}
+
+	if err := tests.MakeMxLibrary(mxlibObjs); err != nil {
 		t.Fail()
 	}
 
 	result := []libdrawio.MxLibObject{}
-	err = json.Unmarshal([]byte(tests.Value), &result)
+	err := json.Unmarshal([]byte(tests.Value), &result)
 	if err != nil {
 		t.Fail()
 	}
@@ -139,15 +141,29 @@ func TestMakeMxLibrary(t *testing.T) {
 	}
 }
 
-func TestMakeMxLibraryMxGraphModelsNil(t *testing.T) {
+func TestMakeMxLibObjMxGraphModelNil(t *testing.T) {
 	tests := libdrawio.NewMxLibrary()
-	tests.MxGraphModels = nil
-	err := tests.MakeMxLibrary(func(m *libdrawio.MxLibObject) *libdrawio.MxLibObject { return m })
+	mxlibObj, err := tests.MakeMxLibObj(nil, "test", 25, 25)
 	if err != nil {
 		t.Fail()
 	}
 
-	if tests.Value != "[]" {
+	if mxlibObj.Title != "test" {
+		t.Fail()
+	}
+
+	if mxlibObj.H != 25 {
+		t.Fail()
+	}
+
+	if mxlibObj.W != 25 {
+		t.Fail()
+	}
+
+	mxGraphModel := &libdrawio.MxGraphModel{}
+	mxGraphModel = nil
+	compressed, _ := mxGraphModel.Compress()
+	if mxlibObj.Xml != compressed  {
 		t.Fail()
 	}
 }
@@ -165,3 +181,4 @@ func TestWriteMxLibrary(t *testing.T) {
 
 	os.Remove("./ut_mxlibrary.xml")
 }
+
