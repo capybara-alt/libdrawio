@@ -22,17 +22,22 @@ MxGraphModel struct manage mxGraphModel (xml)
 ### MxLibrary
 MxLibrary struct manage mxlibrary (xml file).
 ```
-	// Assign to Mxlibrary.MxGraphModels
-	mxlibrary.MxGraphModels = mxGraphModels
-	// Then you can make mxlibrary string from MxModels.
-	err := mxlibrary.MakeMxLibrary(func(m *libdrawio.MxLibObject) *libdrawio.MxLibObject {
-		m.H = 24
-		m.W = 24
-		m.Title = "test"
-		return m
-	})
-	if err != nil {
-		t.Fail()
+	// Create MxLibObj from MxGraphModel
+	mxLibObjs := make([]libdrawio.MxLibObj, len(mxGraphModels))
+	for index, mxGraphModel := range mxGraphModels {
+		mxLibObj, err := mxlibrary.MakeMxLibObj(mxGraphModel, "title", 24, 24)
+		if err != nil {
+			log.Fatal(err)
+		}
+		mxLibObjs[index] = mxLibObj
+	}
+	// Create MxLibrary from array of MxLibObj
+	if err := mxlibrary.MakeMxLibrary(mxLibObjs); err != nil {
+		log.Fatal(err)
+	}
+	// Write mxlibrary file
+	if err := mxlibrary.Write("path_to_mxlibrary"); err != nil {
+		log.Fatal(err)
 	}
 ```
 ### MxFile
